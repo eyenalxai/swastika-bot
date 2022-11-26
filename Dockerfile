@@ -11,8 +11,10 @@ FROM rust:1.65.0 as builder
 
 WORKDIR /build
 
+COPY --from=fetcher /cargo/target ./target
+COPY ./Cargo.toml ./Cargo.toml
+COPY ./Cargo.lock ./Cargo.lock
 COPY ./src /build/src
-COPY ./Cargo.toml /build/Cargo.toml
 
 RUN cargo build --release
 
