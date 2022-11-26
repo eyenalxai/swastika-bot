@@ -1,9 +1,9 @@
 use std::env;
 use std::fmt::Debug;
 
-use rand::rngs::StdRng;
 use rand::seq::SliceRandom;
 use rand::SeedableRng;
+use rand_pcg::Pcg32;
 use teloxide::dispatching::update_listeners::webhooks;
 use teloxide::dispatching::{Dispatcher, UpdateFilterExt};
 use teloxide::error_handlers::LoggingErrorHandler;
@@ -37,18 +37,15 @@ async fn answer(bot: Bot, q: InlineQuery) -> ResponseResult<()> {
         }
     };
     let user_id = q.from.id.0;
-    log::info!("User ID: {}", user_id);
-    log::info!("Today timestamp: {}", today_timestamp);
-    let mut seed = StdRng::seed_from_u64(user_id + today_timestamp);
-    let swastika_text = match SWASTIKAS.choose(&mut seed) {
+    let mut rng = Pcg32::seed_from_u64(user_id + today_timestamp);
+
+    let swastika_text = match SWASTIKAS.choose(&mut rng) {
         Some(s) => s.to_string(),
         None => panic!("Failed to get swastika"),
     };
 
-    log::info!("Text: {}", swastika_text);
-
     let swastika_result = InlineQueryResultArticle::new(
-        "01".to_string(),
+        rand::random::<u32>().to_string(),
         "Какая ты сегодня свастика?",
         InputMessageContent::Text(InputMessageContentText::new(swastika_text)),
     );
