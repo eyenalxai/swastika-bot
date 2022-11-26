@@ -1,6 +1,9 @@
 use std::env;
 use std::fmt::Debug;
 
+use rand::rngs::StdRng;
+use rand::seq::SliceRandom;
+use rand::SeedableRng;
 use teloxide::dispatching::update_listeners::webhooks;
 use teloxide::dispatching::{Dispatcher, UpdateFilterExt};
 use teloxide::error_handlers::LoggingErrorHandler;
@@ -35,10 +38,13 @@ async fn answer(bot: Bot, q: InlineQuery) -> ResponseResult<()> {
     };
     let timestamp = today_at_midnight.timestamp() as u64;
     let user_id = q.from.id.0;
-    let random_index = ((user_id + timestamp) as usize) % SWASTIKAS.len();
-    let swastika_text = match SWASTIKAS.get(random_index) {
-        Some(swastika) => swastika.to_string(),
-        None => panic!("No swastika found for index {}", random_index),
+    let mut seed = StdRng::seed_from_u64(user_id + timestamp);
+    let swastika_text = match SWASTIKAS.choose(&mut seed) {
+        Some(s) => s.to_string(),
+        None => {
+            log::error!("Failed to get swastika");
+            panic!("Failed to get swastika");
+        }
     };
 
     log::info!("Text: {}", swastika_text);
