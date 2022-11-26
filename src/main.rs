@@ -47,17 +47,15 @@ async fn main() {
         };
 
         let swastika_result = InlineQueryResultArticle::new(
-            "01".to_string(),
+            "02".to_string(),
             "Какая ты сегодня свастика?",
             InputMessageContent::Text(InputMessageContentText::new(swastika_text)),
         );
         let results = vec![InlineQueryResult::Article(swastika_result)];
 
-        let response = bot.answer_inline_query(&q.id, results).send().await;
-        if let Err(err) = response {
-            log::error!("Error in handler: {:?}", err);
-        }
-        respond(())
+        bot.answer_inline_query(&q.id, results).send().await?;
+
+        Ok(())
     };
 
     let handler = Update::filter_inline_query().branch(dptree::endpoint(swastika_handler));
