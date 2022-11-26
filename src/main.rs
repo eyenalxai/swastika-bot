@@ -85,7 +85,6 @@ async fn main() {
                 .expect("PORT env variable is not set")
                 .parse()
                 .expect("PORT env variable value is not an integer");
-            log::info!("Port: {}", port.clone().to_string());
 
             let addr = ([0, 0, 0, 0], port).into();
 
@@ -94,13 +93,14 @@ async fn main() {
                 Ok(url) => url,
                 Err(err) => panic!("Failed to parse URL: {}", err),
             };
-            log::info!("URL: {}", url.to_string());
+
+            log::info!("Starting webhook");
+            log::info!("Port: {}", port.clone().to_string());
+            log::info!("URL: {}", url.clone().to_string());
 
             let listener = webhooks::axum(bot.clone(), webhooks::Options::new(addr, url))
                 .await
                 .expect("Couldn't setup webhook");
-
-            log::info!("Starting webhook");
 
             teloxide::repl_with_listener(bot, swastika_handler, listener).await;
         }
