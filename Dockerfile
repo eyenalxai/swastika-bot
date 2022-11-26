@@ -5,6 +5,8 @@ WORKDIR /cargo
 COPY ./Cargo.toml ./Cargo.toml
 COPY ./Cargo.lock ./Cargo.lock
 
+RUN cargo fetch
+
 FROM rust:1.65.0 as builder
 
 WORKDIR /build
