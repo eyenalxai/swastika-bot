@@ -7,7 +7,7 @@ use rand::SeedableRng;
 use teloxide::dispatching::update_listeners::webhooks;
 use teloxide::dispatching::{Dispatcher, UpdateFilterExt};
 use teloxide::error_handlers::LoggingErrorHandler;
-use teloxide::requests::{Request, Requester, ResponseResult};
+use teloxide::requests::{Requester, ResponseResult};
 use teloxide::types::{
     InlineQuery, InlineQueryResult, InlineQueryResultArticle, InputMessageContent,
     InputMessageContentText, Update,
