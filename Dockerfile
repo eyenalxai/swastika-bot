@@ -24,4 +24,4 @@ ARG EXPOSE_PORT=${PORT}
 
 EXPOSE ${EXPOSE_PORT}
 
-ENTRYPOINT ["/app/swastika-bot"]
+ENTRYPOINT ["/app/oof-bot"]
