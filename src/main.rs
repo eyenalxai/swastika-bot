@@ -42,10 +42,7 @@ async fn answer(bot: Bot, q: InlineQuery) -> ResponseResult<()> {
     let mut seed = StdRng::seed_from_u64(user_id + today_timestamp);
     let swastika_text = match SWASTIKAS.choose(&mut seed) {
         Some(s) => s.to_string(),
-        None => {
-            log::error!("Failed to get swastika");
-            panic!("Failed to get swastika");
-        }
+        None => panic!("Failed to get swastika"),
     };
 
     log::info!("Text: {}", swastika_text);
