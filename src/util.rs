@@ -37,7 +37,7 @@ pub(crate) fn get_random_swastika(user_id: u64) -> String {
     }
 }
 
-pub(crate) async fn answer(bot: Bot, q: InlineQuery) -> ResponseResult<()> {
+pub(crate) async fn swastika_answer(bot: Bot, q: InlineQuery) -> ResponseResult<()> {
     let swastika_text = get_random_swastika(q.from.id.0);
 
     let swastika_result = InlineQueryResultArticle::new(

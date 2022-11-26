@@ -7,7 +7,7 @@ use teloxide::types::Update;
 use teloxide::{dptree, Bot};
 use url::Url;
 
-use crate::util::{answer, PollingMode};
+use crate::util::{swastika_answer, PollingMode};
 
 mod swastikas;
 mod util;
@@ -27,16 +27,17 @@ async fn main() {
         Err(_) => panic!("POLLING_MODE env var is not set, probably..."),
     };
 
-    let handler = Update::filter_inline_query().branch(dptree::endpoint(answer));
+    let swastika_handler = Update::filter_inline_query().branch(dptree::endpoint(swastika_answer));
 
     match polling_mode {
         PollingMode::Polling => {
-            Dispatcher::builder(bot, handler)
+            Dispatcher::builder(bot, swastika_handler)
                 .enable_ctrlc_handler()
                 .build()
                 .dispatch()
                 .await
         }
+
         PollingMode::Webhook => {
             let port: u16 = env::var("PORT")
                 .expect("PORT env variable is not set")
@@ -59,7 +60,7 @@ async fn main() {
                 .await
                 .expect("Couldn't setup webhook");
 
-            Dispatcher::builder(bot, handler)
+            Dispatcher::builder(bot, swastika_handler)
                 .enable_ctrlc_handler()
                 .build()
                 .dispatch_with_listener(listener, LoggingErrorHandler::new())
