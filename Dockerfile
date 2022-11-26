@@ -1,3 +1,5 @@
+FROM rust:1.65.0 as builder
+
 WORKDIR /build
 
 COPY ./Cargo.toml /build/Cargo.toml
