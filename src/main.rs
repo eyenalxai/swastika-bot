@@ -22,7 +22,7 @@ async fn answer(bot: Bot, q: InlineQuery) -> ResponseResult<()> {
     let result = InlineQueryResultArticle::new(
         "01".to_string(),
         "oof?",
-        InputMessageContent::Text(InputMessageContentText::new("boof")),
+        InputMessageContent::Text(InputMessageContentText::new("boof boof")),
     );
     let results = vec![InlineQueryResult::Article(result)];
 
