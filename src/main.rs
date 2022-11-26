@@ -87,7 +87,7 @@ async fn main() {
             let addr = ([0, 0, 0, 0], port).into();
 
             let host = env::var("DOMAIN").expect("DOMAIN env variable is not set");
-            let url: Url = match format!("https://{host}/webhook").parse() {
+            let url: Url = match format!("https://{host}/webhook/main").parse() {
                 Ok(url) => url,
                 Err(err) => panic!("Failed to parse URL: {}", err),
             };
