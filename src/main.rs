@@ -3,6 +3,7 @@ use std::fmt::Debug;
 
 use teloxide::dispatching::update_listeners::webhooks;
 use teloxide::dispatching::{Dispatcher, UpdateFilterExt};
+use teloxide::prelude::Message;
 use teloxide::requests::{Request, Requester};
 use teloxide::types::{
     InlineQuery, InlineQueryResult, InlineQueryResultArticle, InputMessageContent,
@@ -53,9 +54,11 @@ async fn main() {
         );
         let results = vec![InlineQueryResult::Article(swastika_result)];
 
-        bot.answer_inline_query(&q.id, results).send().await?;
-
-        Ok(())
+        let response = bot.answer_inline_query(&q.id, results).send().await;
+        if let Err(err) = response {
+            log::error!("Error in handler: {:?}", err);
+        }
+        respond(())
     };
 
     let handler = Update::filter_inline_query().branch(dptree::endpoint(swastika_handler));
@@ -100,7 +103,15 @@ async fn main() {
                 .await
                 .expect("Couldn't setup webhook");
 
-            teloxide::repl_with_listener(bot, swastika_handler, listener).await;
+            teloxide::repl_with_listener(
+                bot,
+                |bot: Bot, msg: Message| async move {
+                    bot.send_message(msg.chat.id, "pong").await?;
+                    Ok(())
+                },
+                listener,
+            )
+            .await;
         }
     }
 }
