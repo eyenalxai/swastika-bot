@@ -11,7 +11,6 @@ WORKDIR /build
 
 COPY ./src /build/src
 COPY ./Cargo.toml /build/Cargo.toml
-COPY ./Cargo.lock /build/Cargo.lock
 
 RUN cargo build --release
 
@@ -19,9 +18,13 @@ FROM rust:1.65.0 as runner
 
 WORKDIR /app
 
+COPY --from=builder /build/target/release/ /app
+
 ENV RUST_LOG=${RUST_LOG}
 ENV TELOXIDE_TOKEN=${TELOXIDE_TOKEN}
 
-COPY --from=builder /build/target/release/ /app
+ARG EXPOSE_PORT=${PORT}
+
+EXPOSE ${EXPOSE_PORT}
 
 ENTRYPOINT ["/app/swastika-bot"]
