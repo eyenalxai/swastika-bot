@@ -1244,6 +1244,7 @@ dependencies = [
  "rand",
  "teloxide",
  "tokio",
+ "url",
 ]
 
 [[package]]

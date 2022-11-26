@@ -9,6 +9,7 @@ use teloxide::types::{
     InputMessageContentText, Update,
 };
 use teloxide::{dptree, respond, Bot};
+use url::Url;
 
 use crate::swastikas::SWASTIKAS;
 
@@ -23,7 +24,6 @@ pub(crate) enum PollingMode {
 #[tokio::main]
 async fn main() {
     pretty_env_logger::init();
-    log::info!("Starting inline bot...");
 
     let bot = Bot::from_env();
 
@@ -73,7 +73,7 @@ async fn main() {
 
     match polling_mode {
         PollingMode::Polling => {
-            log::info!("Starting polling...");
+            log::info!("Starting polling");
             Dispatcher::builder(bot, handler)
                 .enable_ctrlc_handler()
                 .build()
@@ -85,22 +85,23 @@ async fn main() {
                 .expect("PORT env variable is not set")
                 .parse()
                 .expect("PORT env variable value is not an integer");
+            log::info!("Port: {}", port.clone().to_string());
 
             let addr = ([0, 0, 0, 0], port).into();
 
             let host = env::var("DOMAIN").expect("DOMAIN env variable is not set");
-            let url = match format!("https://{host}/webhook").parse() {
+            let url: Url = match format!("https://{host}/webhook").parse() {
                 Ok(url) => url,
                 Err(err) => panic!("Failed to parse URL: {}", err),
             };
+            log::info!("URL: {}", url.to_string());
 
             let listener = webhooks::axum(bot.clone(), webhooks::Options::new(addr, url))
                 .await
                 .expect("Couldn't setup webhook");
 
-            log::info!("Starting webhook at:");
-            log::info!("Port: {}", port);
-            log::info!("URL: {}", url);
+            log::info!("Starting webhook");
+
             teloxide::repl_with_listener(bot, swastika_handler, listener).await;
         }
     }
