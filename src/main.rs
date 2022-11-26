@@ -26,19 +26,18 @@ pub(crate) enum PollingMode {
 }
 
 async fn answer(bot: Bot, q: InlineQuery) -> ResponseResult<()> {
-    let today_at_midnight = match chrono::Utc::now()
+    let today_timestamp = match chrono::Utc::now()
         .date_naive()
         .and_hms_milli_opt(0, 0, 0, 0)
     {
-        Some(t) => t,
+        Some(t) => t.timestamp() as u64,
         None => {
             log::error!("Failed to get today at midnight");
             panic!("Failed to get today at midnight");
         }
     };
-    let timestamp = today_at_midnight.timestamp() as u64;
     let user_id = q.from.id.0;
-    let mut seed = StdRng::seed_from_u64(user_id + timestamp);
+    let mut seed = StdRng::seed_from_u64(user_id + today_timestamp);
     let swastika_text = match SWASTIKAS.choose(&mut seed) {
         Some(s) => s.to_string(),
         None => {
