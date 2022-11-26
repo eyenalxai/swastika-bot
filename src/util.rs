@@ -1,6 +1,6 @@
+use rand::rngs::StdRng;
 use rand::seq::SliceRandom;
 use rand::SeedableRng;
-use rand_pcg::Pcg32;
 use teloxide::payloads::AnswerInlineQuerySetters;
 use teloxide::requests::{Requester, ResponseResult};
 use teloxide::types::{
@@ -29,7 +29,7 @@ pub(crate) fn get_random_swastika(user_id: u64) -> String {
         }
     };
 
-    let mut rng = Pcg32::seed_from_u64(user_id + today_timestamp);
+    let mut rng = StdRng::seed_from_u64(user_id + today_timestamp);
 
     match SWASTIKAS.choose(&mut rng) {
         Some(s) => s.to_string(),
