@@ -14,7 +14,7 @@ mod util;
 
 #[tokio::main]
 async fn main() {
-    pretty_env_logger::init();
+    pretty_env_logger::init_timed();
 
     let bot = Bot::from_env();
 
@@ -31,6 +31,8 @@ async fn main() {
 
     match polling_mode {
         PollingMode::Polling => {
+            log::info!("Polling!");
+
             Dispatcher::builder(bot, swastika_handler)
                 .enable_ctrlc_handler()
                 .build()
@@ -44,18 +46,17 @@ async fn main() {
                 .parse()
                 .expect("PORT env variable value is not an integer");
 
-            let addr = ([0, 0, 0, 0], port).into();
-
-            let host = env::var("DOMAIN").expect("DOMAIN env variable is not set");
-            let url: Url = match format!("https://{host}/webhook/main").parse() {
+            let domain = env::var("DOMAIN").expect("DOMAIN env variable is not set");
+            let url: Url = match format!("https://{domain}/webhook/main").parse() {
                 Ok(url) => url,
                 Err(err) => panic!("Failed to parse URL: {}", err),
             };
 
-            log::info!("Starting webhook");
+            log::info!("Webhook!");
             log::info!("Port: {}", port.clone().to_string());
             log::info!("URL: {}", url.clone().to_string());
 
+            let addr = ([0, 0, 0, 0], port).into();
             let listener = webhooks::axum(bot.clone(), webhooks::Options::new(addr, url))
                 .await
                 .expect("Couldn't setup webhook");
