@@ -3,6 +3,7 @@ use std::fmt::Debug;
 
 use teloxide::dispatching::update_listeners::webhooks;
 use teloxide::dispatching::{Dispatcher, UpdateFilterExt};
+use teloxide::error_handlers::LoggingErrorHandler;
 use teloxide::requests::{Request, Requester, ResponseResult};
 use teloxide::types::{
     InlineQuery, InlineQueryResult, InlineQueryResultArticle, InputMessageContent,
@@ -79,13 +80,13 @@ async fn main() {
                 .await
                 .expect("Couldn't setup webhook");
 
-            teloxide::repl_with_listener(bot, answer, listener).await
+            // teloxide::repl_with_listener(bot, answer, listener).await
 
-            // Dispatcher::builder(bot, handler)
-            //     .enable_ctrlc_handler()
-            //     .build()
-            //     .dispatch_with_listener(listener, LoggingErrorHandler::new())
-            //     .await
+            Dispatcher::builder(bot, handler)
+                .enable_ctrlc_handler()
+                .build()
+                .dispatch_with_listener(listener, LoggingErrorHandler::new())
+                .await
         }
     }
 }
