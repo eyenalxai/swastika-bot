@@ -37,6 +37,8 @@ async fn answer(bot: Bot, q: InlineQuery) -> ResponseResult<()> {
         }
     };
     let user_id = q.from.id.0;
+    log::info!("User ID: {}", user_id);
+    log::info!("Today timestamp: {}", today_timestamp);
     let mut seed = StdRng::seed_from_u64(user_id + today_timestamp);
     let swastika_text = match SWASTIKAS.choose(&mut seed) {
         Some(s) => s.to_string(),
