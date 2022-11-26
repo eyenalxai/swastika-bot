@@ -73,6 +73,7 @@ async fn main() {
 
     match polling_mode {
         PollingMode::Polling => {
+            log::info!("Starting polling...");
             Dispatcher::builder(bot, handler)
                 .enable_ctrlc_handler()
                 .build()
@@ -97,6 +98,9 @@ async fn main() {
                 .await
                 .expect("Couldn't setup webhook");
 
+            log::info!("Starting webhook at:");
+            log::info!("Port: {}", port);
+            log::info!("URL: {}", url);
             teloxide::repl_with_listener(bot, swastika_handler, listener).await;
         }
     }
