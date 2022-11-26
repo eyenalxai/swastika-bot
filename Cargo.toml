@@ -3,9 +3,6 @@ name = "swastika-bot"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]]
-name = "swastika-bot"
-
 [dependencies]
 teloxide = { version = "0.11", features = ["macros", "webhooks-axum"] }
 log = "0.4"

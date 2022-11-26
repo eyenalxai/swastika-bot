@@ -1,17 +1,5 @@
-FROM rust:1.65.0 as fetcher
-
-WORKDIR /cargo
-
-COPY ./Cargo.toml /cargo/Cargo.toml
-COPY ./Cargo.lock /cargo/Cargo.lock
-
-RUN cargo fetch
-
-FROM rust:1.65.0 as builder
-
 WORKDIR /build
 
-COPY --from=fetcher /cargo/target /build/target
 COPY ./Cargo.toml /build/Cargo.toml
 COPY ./Cargo.lock /build/Cargo.lock
 COPY ./src /build/src
