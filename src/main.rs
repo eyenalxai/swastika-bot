@@ -12,6 +12,10 @@ use teloxide::types::{
 use teloxide::{dptree, respond, Bot};
 use url::Url;
 
+use crate::swastikas::SWASTIKAS;
+
+mod swastikas;
+
 #[derive(Debug, Clone, Copy)]
 pub(crate) enum PollingMode {
     Polling,
@@ -19,12 +23,32 @@ pub(crate) enum PollingMode {
 }
 
 async fn answer(bot: Bot, q: InlineQuery) -> ResponseResult<()> {
-    let result = InlineQueryResultArticle::new(
+    let today_at_midnight = match chrono::Utc::now()
+        .date_naive()
+        .and_hms_milli_opt(0, 0, 0, 0)
+    {
+        Some(t) => t,
+        None => {
+            log::error!("Failed to get today at midnight");
+            panic!("Failed to get today at midnight");
+        }
+    };
+    let timestamp = today_at_midnight.timestamp() as u64;
+    let user_id = q.from.id.0;
+    let random_index = ((user_id + timestamp) as usize) % SWASTIKAS.len();
+    let swastika_text = match SWASTIKAS.get(random_index) {
+        Some(swastika) => swastika.to_string(),
+        None => panic!("No swastika found for index {}", random_index),
+    };
+
+    log::info!("Text: {}", swastika_text);
+
+    let swastika_result = InlineQueryResultArticle::new(
         "01".to_string(),
-        "oof?",
-        InputMessageContent::Text(InputMessageContentText::new("boof boof")),
+        "Какая ты сегодня свастика?",
+        InputMessageContent::Text(InputMessageContentText::new(swastika_text)),
     );
-    let results = vec![InlineQueryResult::Article(result)];
+    let results = vec![InlineQueryResult::Article(swastika_result)];
 
     let response = bot.answer_inline_query(&q.id, results).send().await;
     if let Err(err) = response {
