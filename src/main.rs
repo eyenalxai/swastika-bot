@@ -55,7 +55,7 @@ async fn answer(bot: Bot, q: InlineQuery) -> ResponseResult<()> {
     );
     let results = vec![InlineQueryResult::Article(swastika_result)];
 
-    let response = bot.answer_inline_query(&q.id, results).send().await;
+    let response = bot.answer_inline_query(&q.id, results).await;
     if let Err(err) = response {
         log::error!("Error in handler: {:?}", err);
     }
@@ -108,8 +108,6 @@ async fn main() {
             let listener = webhooks::axum(bot.clone(), webhooks::Options::new(addr, url))
                 .await
                 .expect("Couldn't setup webhook");
-
-            // teloxide::repl_with_listener(bot, answer, listener).await
 
             Dispatcher::builder(bot, handler)
                 .enable_ctrlc_handler()
